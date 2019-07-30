@@ -48,6 +48,7 @@ module.exports = {
       })
     }
   },
+  //配置路径别名,方便操作书写
   chainWebpack(config){
     config.resolve.alias
       .set('components',resolve('src/components'))

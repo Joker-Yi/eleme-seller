@@ -36,6 +36,7 @@
           <div class="detail-main">
             <h1 class="name">{{seller.name}}</h1>
             <div class="star-wrapper">
+<!--              星星评分组件-->
               <star :size="48" :score="seller.score"></star>
             </div>
             <div class="title">
@@ -68,6 +69,7 @@
 </template>
 
 <script>
+  import star from '../star/star'
 export default {
 name: "homeHeader",
   props: {
@@ -96,7 +98,7 @@ name: "homeHeader",
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
   },
   components: {
-
+    star
   }
 }
 </script>
