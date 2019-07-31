@@ -5,9 +5,7 @@
       v-model="selectedLabelDefault"
       :data="tabs"
       show-slider
-      class="border-bottom-1px"
-      @click="clickHandler"
-      @change="changeHandler">
+      class="border-bottom-1px">
     </cube-tab-bar>
     <div class="slide-wrapper">
       <cube-slide
@@ -20,15 +18,18 @@
       >
 <!--        自带change事件,可获取当前索引-->
         <!--    使用默认插槽和 cube-slide-item 就可以自定义每个轮播页的结构-->
-        <cube-slide-item>
-          <goods></goods>
+        <cube-slide-item v-for="(tab,index) in tabs" :key="index">
+          <component :is="tab.component" :data="tab.data"></component>
         </cube-slide-item>
-        <cube-slide-item>
-          <ratings></ratings>
-        </cube-slide-item>
-        <cube-slide-item>
-          <seller></seller>
-        </cube-slide-item>
+<!--        <cube-slide-item>-->
+<!--          <goods></goods>-->
+<!--        </cube-slide-item>-->
+<!--        <cube-slide-item>-->
+<!--          <ratings></ratings>-->
+<!--        </cube-slide-item>-->
+<!--        <cube-slide-item>-->
+<!--          <seller></seller>-->
+<!--        </cube-slide-item>-->
       </cube-slide>
     </div>
   </div>
@@ -41,14 +42,18 @@ import Seller from 'components/seller/seller'
 import Ratings from 'components/ratings/ratings'
 export default {
   name: "tab",
+  props:{
+    tabs: Array
+  },
   data(){
     return{
       index:0,
-      tabs:[
-        {label:'商品'},
-        {label:'评价'},
-        {label:'商家'},
-      ],
+      //不能写死,不易于维护,利用props传值过来
+      // tabs:[
+      //   {label:'商品'},
+      //   {label:'评价'},
+      //   {label:'商家'},
+      // ],
     }
   },
   methods:{
