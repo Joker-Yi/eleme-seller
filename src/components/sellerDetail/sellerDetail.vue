@@ -30,7 +30,7 @@
             </div>
           </div>
         </div>
-        <div class="detail-close" @click="hideDetail">
+        <div class="detail-close" @click="hide">
           <i class="icon-close"></i>
         </div>
       </div>
@@ -41,7 +41,7 @@
 <script>
 import star from '../star/star'
 export default {
-  name: "sellerDetail",
+  name: "SellerDetail",
   props: {
     seller: {
       type: Object,
@@ -50,35 +50,24 @@ export default {
       }
     },
       //接收父组件的值
-    detailShow:Boolean,
+    // detailShow:Boolean,
   },
   data(){
     return{
-      // tep_detailShow: this.detailShow
+      detailShow: false,
     }
   },
-  // computed: {
-  //   starValue:{
-  //     get:function () {
-  //       return this.tep_detailShow
-  //     },
-  //     set: function(newValue){
-  //         // $emit is the correct way to update props:
-  //       this.$emit('update:detailShow', newValue);
-  //     }
-  //   }
-  // },
-  // watch:{
-  //   tep_detailShow(val){
-  //       this.$emit('update:detailShow', val);
-  //   }
-  // },
+  //这里采用父传子值,子再返回父修改后的值,操作太麻烦,而且会报warning 这个值会被覆写 overwriten,另一方面该组件是全屏的弹窗模式,更希望看到是像alert那种api调用方式
+  //改用cube-ui中的create-api 模块,把该组件以 API 的形式调用,可以在任意组件中调用
   methods:{
-    hideDetail(){
+    hide(){
       this.detailShow = false;
       //向父组件传递修改后的值detailShow(虽然很不好的覆写了父组件传递的值)
-      this.$emit('update',this.detailShow)
+      // this.$emit('update',this.detailShow)
     },
+    show(){
+      this.detailShow = true;
+    }
   },
   components:{
     star
@@ -103,6 +92,7 @@ export default {
     backdrop-filter: blur(10px)
     opacity: 1
     background: rgba(7, 17, 27, 0.8)
+    color : #fff
     &.fade-enter-active, &.fade-leave-active
       transition: all 0.5s
     &.fade-enter, &.fade-leave-active

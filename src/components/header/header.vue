@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header" @click="showDetail">
     <div class="content-wrapper">
       <div class="avatar">
         <img width="64" height="64" :src="seller.avatar">
@@ -30,7 +30,7 @@
       <img :src="seller.avatar" width="100%" height="100%">
     </div>
 <!--    商家详情页-->
-    <seller-detail :seller="seller" :detailShow="detailShow" @update="showChildMsg"></seller-detail>
+<!--    <seller-detail :seller="seller" :detailShow="detailShow" @update="showChildMsg"></seller-detail>-->
   </div>
 </template>
 
@@ -49,12 +49,20 @@ name: "homeHeader",
   },
   data() {
     return {
-      detailShow: false
+      // detailShow: false
     };
   },
   methods: {
     showDetail() {
-      this.detailShow = true;
+      // this.detailShow = true;
+      //返回的是一个组件实例
+      // bug点:this.$createSellerDetail this.$create后接的是组件的name,并且要大写开头区分
+      this.sellerDetailComp = this.sellerDetailComp || this.$createSellerDetail({
+          $props:{
+              seller:'seller'//响应式
+          }
+      });
+      this.sellerDetailComp.show();
     },
       //接受子组件sellerDetail传过来修改后的值
     showChildMsg(value){
