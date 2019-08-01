@@ -47,13 +47,13 @@ name: "homeHeader",
       }
     }
   },
-  data() {
+  data () {
     return {
       // detailShow: false
     };
   },
   methods: {
-    showDetail() {
+    showDetail () {
       // this.detailShow = true;
       //返回的是一个组件实例
       // bug点:this.$createSellerDetail this.$create后接的是组件的name,并且要大写开头区分
@@ -70,11 +70,11 @@ name: "homeHeader",
       this.detailShow = value;
     }
   },
-  created() {
-    this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+  created () {
+    this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
   },
   components: {
-    SellerDetail
+    // SellerDetail
   }
 }
 </script>
