@@ -35,7 +35,7 @@
                   </div>
                   <div class="cartcontrol-wrapper">
 <!--                    添加 小球按钮-->
-
+<!--                      <cartcontrol @add="addFood" :food="food"></cartcontrol>-->
                   </div>
                 </div>
               </li>
@@ -45,14 +45,23 @@
       </div>
 <!--      购物车-->
 
+<!--      <shopcart ref="shopcart" :selectFoods="selectFoods" :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>-->
+      <shopcart :deliveryPrice="sellerInfo.deliveryPrice"
+                :minPrice="sellerInfo.minPrice"
+                :selectFoods="selectFoods"></shopcart>
     </div>
-<!--    食物详情页-->
 
+
+<!--    食物详情页-->
+<!--    <food @add="addFood" :food="selectedFood" ref="food"></food>-->
   </div>
 </template>
 
 <script>
 import BScroll from 'better-scroll'
+import shopcart from 'components/shopCart/shopCart.vue'
+import {getSeller} from "../../api";
+
 export default {
   name: "goods",
   props: ['data'],
@@ -61,7 +70,8 @@ export default {
       goodList: [],
       listHeight: [],
       scrollY: 0,
-      selectedFood: {}
+      selectedFood: {},
+      sellerInfo: {},
     }
   },
     computed: {
@@ -91,6 +101,11 @@ export default {
         }
     },
     methods: {
+        _getSellerInfo(){
+            getSeller().then((seller) =>{
+                this.sellerInfo = seller;
+            })
+        },
     //点击侧边栏 food栏滚动到相应列表
     selectMenu(index, event){
       if (!event._constructed){
@@ -157,6 +172,7 @@ export default {
     },
   created() {
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+    this._getSellerInfo();
     this.goodList = this.data;
     console.log(this.goodList);
       this.$nextTick(() => {
@@ -169,6 +185,9 @@ export default {
       scrollY:function () {
           this._calculateHeight()
       }
+  },
+  components: {
+      shopcart,
   }
 }
 </script>
@@ -179,6 +198,7 @@ export default {
 .goodsWrapper
   position: relative
   height: 100%
+  overflow: hidden
   .goods
     display: flex
     position: absolute
@@ -191,48 +211,51 @@ export default {
     .menu-wrapper
       flex: 0 0 80px
       width: 80px
+
       background: #f3f5f7
-      .menu-item
-        display: table
-        height: 54px
-        width: 56px
-        padding: 0 12px
-        line-height: 14px
-        &.current
-          position: relative
-          z-index: 10
-          margin-top: -1px
-          background: #fff
-          font-weight: 700
-          .text
-            border-none()
-        .icon
-          display: inline-block
-          vertical-align: top
-          width: 12px
-          height: 12px
-          margin-right: 2px
-          background-size: 12px 12px
-          background-repeat: no-repeat
-          &.decrease
-            bg-image('decrease_3')
-          &.discount
-            bg-image('discount_3')
-          &.guarantee
-            bg-image('guarantee_3')
-          &.invoice
-            bg-image('invoice_3')
-          &.special
-            bg-image('special_3')
-        .text
-          display: table-cell
+      ul
+        padding-bottom: 58px
+        .menu-item
+          display: table
+          height: 54px
           width: 56px
-          vertical-align: middle
-          border-1px(rgba(7, 17, 27, 0.1))
-          font-size: 12px
-          .word
-            text-overflow: ellipsis !important;
-            white-space: normal !important;
+          padding: 0 12px
+          line-height: 14px
+          &.current
+            position: relative
+            z-index: 10
+            margin-top: -1px
+            background: #fff
+            font-weight: 700
+            .text
+              border-none()
+          .icon
+            display: inline-block
+            vertical-align: top
+            width: 12px
+            height: 12px
+            margin-right: 2px
+            background-size: 12px 12px
+            background-repeat: no-repeat
+            &.decrease
+              bg-image('decrease_3')
+            &.discount
+              bg-image('discount_3')
+            &.guarantee
+              bg-image('guarantee_3')
+            &.invoice
+              bg-image('invoice_3')
+            &.special
+              bg-image('special_3')
+          .text
+            display: table-cell
+            width: 56px
+            vertical-align: middle
+            border-1px(rgba(7, 17, 27, 0.1))
+            font-size: 12px
+            .word
+              text-overflow: ellipsis !important;
+              white-space: normal !important;
     .foods-wrapper
       flex: 1
       .title
