@@ -44,7 +44,8 @@
         </ul>
       </div>
       <!--      购物车-->
-
+      <shopcart ref="shopcart" :selectFoods="selectFoods" :deliveryPrice="sellerInfo.deliveryPrice"
+                :minPrice="sellerInfo.minPrice"></shopcart>
     </div>
     <!--    食物详情页-->
 
@@ -52,7 +53,7 @@
 
 <script>
 import BScroll from 'better-scroll'
-// import shopcart from 'components/shopCart/shopCart.vue'
+import shopcart from 'components/shopCart/shopCart.vue'
 import {getSeller} from "../../api";
 
 export default {
@@ -179,6 +180,9 @@ export default {
             this._calculateHeight()
         }
     },
+    components:{
+        shopcart,
+    }
 }
 </script>
 
