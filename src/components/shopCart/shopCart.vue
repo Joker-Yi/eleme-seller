@@ -290,8 +290,8 @@ export default {
           line-height: 24px
           font-size: 10px
       .content-right
-        flex: 0 0 105px
-        width: 105px
+        flex: 0 0 100px
+        width: 100px
         .pay
           height: 48px
           line-height: 48px
