@@ -15,14 +15,12 @@
         :initial-index="index"
         ref="slide"
         @change="slideChange"
-        :options="slideOptions"
       >
 <!--        自带change事件,可获取当前索引-->
         <!--    使用默认插槽和 cube-slide-item 就可以自定义每个轮播页的结构-->
         <cube-slide-item v-for="(tab,index) in tabs" :key="index">
           <component :is="tab.component" :data="tab.data"></component>
         </cube-slide-item>
-
 <!--        <cube-slide-item>-->
 <!--          <goods></goods>-->
 <!--        </cube-slide-item>-->
@@ -56,12 +54,8 @@ export default {
       //   {label:'评价'},
       //   {label:'商家'},
       // ],
-      slideOptions:{
-        click: false,
-      }
     }
   },
-
   methods:{
     slideChange(current){ //当前索引
       this.index = current

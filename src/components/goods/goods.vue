@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <div class="goodsWrapper">
     <div class="goods">
 <!--      侧边菜单栏-->
@@ -189,11 +190,20 @@ export default {
   components: {
       shopcart,
   }
+=======
+  <h1>商品</h1>
+</template>
+
+<script>
+export default {
+name: "goods"
+>>>>>>> parent of 0c6976e... 完成侧边选择栏和商品列表栏,实现滚动和左右联动
 }
 </script>
 
-<style scoped lang="stylus" type="text/stylus">
+<style scoped>
 
+<<<<<<< HEAD
   @import "../../common/stylus/mixin.styl"
 .goodsWrapper
   position: relative
@@ -310,4 +320,6 @@ export default {
             position: absolute
             right: 0
             bottom: 12px
+=======
+>>>>>>> parent of 0c6976e... 完成侧边选择栏和商品列表栏,实现滚动和左右联动
 </style>

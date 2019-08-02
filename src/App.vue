@@ -14,47 +14,30 @@ import tab from './components/tab/tab'
 import Goods from 'components/goods/goods'
 import Seller from 'components/seller/seller'
 import Ratings from 'components/ratings/ratings'
-import {getRatings} from "./api";
-import {getGoods} from "./api";
 
 export default {
   name: 'app',
   data(){
     return{
-      seller: {},
-      goods: {},
-      ratings: {}
+      seller: {}
     }
   },
   created() {
-    this._getSeller();
-    this._getGoods();
-    this._getRatings()
+    this._getSeller()
   },
   methods:{
     _getSeller(){
       getSeller().then((seller) =>{
         this.seller = seller
       })
-    },
-    _getGoods(){
-      getGoods().then((goods) => {
-        console.log(goods);
-        this.goods = goods
-      })
-    },
-    _getRatings(){
-      getRatings().then((ratings) => {
-        this.ratings = ratings
-      })
     }
   },
   computed:{
     tabs(){
       return [
-        {label:'商品',component:Goods,data:this.goods},
-        {label:'评价',component:Ratings,data:this.ratings},
-        {label:'商家',component:Seller,data:this.seller},
+        {label:'商品',component:Goods,data:{seller:this.seller}},
+        {label:'评价',component:Seller,data:{seller:this.seller}},
+        {label:'商家',component:Ratings,data:{seller:this.seller}},
       ]
     }
   },
