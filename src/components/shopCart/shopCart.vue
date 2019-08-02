@@ -56,7 +56,8 @@
 </template>
 
 <script>
-
+import BScroll from 'better-scroll';
+import cartcontrol from 'components/cartControl/cartControl.vue'
 
 export default {
   name: "shopCart",
@@ -126,7 +127,8 @@ export default {
                 this.$nextTick(() => {
                     if (!this.scroll) {
                         this.scroll = new BScroll(this.$refs.listContent, {
-                            click: true
+                            // 不让它再次触发添加事件了
+                            click: false
                         });
                     } else {
                         this.scroll.refresh();
@@ -211,6 +213,9 @@ export default {
   created () {
       // this._getSellerInfo();
   },
+  components: {
+      cartcontrol,
+  }
 }
 </script>
 

@@ -19,7 +19,7 @@
           <li v-for="item in data" class="food-list" ref="foodList">
             <h1 class="title">{{item.name}}</h1>
             <ul>
-              <li @click="selectFood(food,$event)" v-for="food in item.foods" class="food-item border-1px">
+              <li @click.stop.prevent="selectFood(food,$event)" v-for="food in item.foods" class="food-item border-1px">
                 <div class="icon">
                   <img width="57" height="57" :src="food.icon">
                 </div>
@@ -35,7 +35,7 @@
                   </div>
                   <div class="cartcontrol-wrapper">
                     <!--                    添加 小球按钮-->
-
+                    <cartcontrol :food="food"></cartcontrol>
                   </div>
                 </div>
               </li>
@@ -54,6 +54,7 @@
 <script>
 import BScroll from 'better-scroll'
 import shopcart from 'components/shopCart/shopCart.vue'
+import cartcontrol from 'components/cartControl/cartControl.vue'
 import {getSeller} from "../../api";
 
 export default {
@@ -135,7 +136,8 @@ export default {
             });
             //让食物列表滚动
             this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
-                click: true,
+                //true 会再次触发一次小球的点击事件
+                click: false,
                 probeType: 3 //让它实时获取滚动的位置
             });
 
@@ -182,6 +184,7 @@ export default {
     },
     components:{
         shopcart,
+        cartcontrol,
     }
 }
 </script>
@@ -304,7 +307,7 @@ export default {
               color: rgb(147, 153, 159)
           .cartcontrol-wrapper
             position: absolute
-            right: 0
+            right: 170px
             bottom: 12px
 
 </style>
