@@ -1,9 +1,7 @@
 <template>
-<<<<<<< HEAD
-<<<<<<< HEAD
   <div class="goodsWrapper">
     <div class="goods">
-<!--      侧边菜单栏-->
+      <!--      侧边菜单栏-->
       <div class="menu-wrapper" ref="menuWrapper">
         <ul>
           <li v-for="(item,index) in data" class="menu-item" :class="{'current':currentIndex===index}"
@@ -15,7 +13,7 @@
           </li>
         </ul>
       </div>
-<!--      食物列表-->
+      <!--      食物列表-->
       <div class="foods-wrapper" ref="foodsWrapper">
         <ul>
           <li v-for="item in data" class="food-list" ref="foodList">
@@ -36,8 +34,8 @@
                                                                   v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                   </div>
                   <div class="cartcontrol-wrapper">
-<!--                    添加 小球按钮-->
-<!--                      <cartcontrol @add="addFood" :food="food"></cartcontrol>-->
+                    <!--                    添加 小球按钮-->
+
                   </div>
                 </div>
               </li>
@@ -45,37 +43,30 @@
           </li>
         </ul>
       </div>
-<!--      购物车-->
+      <!--      购物车-->
 
-<!--      <shopcart ref="shopcart" :selectFoods="selectFoods" :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>-->
-      <shopcart :deliveryPrice="sellerInfo.deliveryPrice"
-                :minPrice="sellerInfo.minPrice"
-                :selectFoods="selectFoods"></shopcart>
     </div>
+    <!--    食物详情页-->
 
-
-<!--    食物详情页-->
-<!--    <food @add="addFood" :food="selectedFood" ref="food"></food>-->
-  </div>
-</template>
+  </div></template>
 
 <script>
 import BScroll from 'better-scroll'
-import shopcart from 'components/shopCart/shopCart.vue'
+// import shopcart from 'components/shopCart/shopCart.vue'
 import {getSeller} from "../../api";
 
 export default {
-  name: "goods",
-  props: ['data'],
-  data () {
-    return {
-      goodList: [],
-      listHeight: [],
-      scrollY: 0,
-      selectedFood: {},
-      sellerInfo: {},
-    }
-  },
+    name: "goods",
+    props: ['data'],
+    data() {
+        return {
+            goodList: [],
+            listHeight: [],
+            scrollY: 0,
+            selectedFood: {},
+            sellerInfo: {},
+        }
+    },
     computed: {
         //当前左侧栏 应该所在的位置
         currentIndex() {
@@ -103,117 +94,98 @@ export default {
         }
     },
     methods: {
-        _getSellerInfo(){
-            getSeller().then((seller) =>{
+        _getSellerInfo() {
+            getSeller().then((seller) => {
                 this.sellerInfo = seller;
             })
         },
-    //点击侧边栏 food栏滚动到相应列表
-    selectMenu(index, event){
-      if (!event._constructed){
-        return;
-      }
-      //拿取食物列表dom 数组
-      let foodList = this.$refs.foodList;
-      let el = foodList[index];
-      this.foodsScroll.scrollToElement(el, 300);
-    },
-     selectFood(food, event) {
-         if (!event._constructed) {
-             return;
-         }
-         this.selectedFood = food;
-         this.$refs.food.show();
-     },
-     addFood(target) {
-         this._drop(target);
-     },
+        //点击侧边栏 food栏滚动到相应列表
+        selectMenu(index, event) {
+            if (!event._constructed) {
+                return;
+            }
+            //拿取食物列表dom 数组
+            let foodList = this.$refs.foodList;
+            let el = foodList[index];
+            this.foodsScroll.scrollToElement(el, 300);
+        },
+        selectFood(food, event) {
+            if (!event._constructed) {
+                return;
+            }
+            this.selectedFood = food;
+            this.$refs.food.show();
+        },
+        addFood(target) {
+            this._drop(target);
+        },
         //小球运动
-     _drop(target) {
-         // 体验优化,异步执行下落动画
-         this.$nextTick(() => {
-             this.$refs.shopcart.drop(target);
-         });
-     },
-    //使用better-scroll初始化滚动事件
-    _initScroll () {
-      //让侧边栏滚动
-      this.meunScroll = new BScroll(this.$refs.menuWrapper,{
-        click: true
-      });
-      //让食物列表滚动
-      this.foodsScroll = new BScroll(this.$refs.foodsWrapper,{
-        click: true,
-        probeType: 3 //让它实时获取滚动的位置
-      });
+        _drop(target) {
+            // 体验优化,异步执行下落动画
+            this.$nextTick(() => {
+                this.$refs.shopcart.drop(target);
+            });
+        },
+        //使用better-scroll初始化滚动事件
+        _initScroll() {
+            //让侧边栏滚动
+            this.meunScroll = new BScroll(this.$refs.menuWrapper, {
+                click: true
+            });
+            //让食物列表滚动
+            this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
+                click: true,
+                probeType: 3 //让它实时获取滚动的位置
+            });
 
-      this.foodsScroll.on('scroll', (pos) => {
-        // 判断滑动方向，避免下拉时分类高亮错误（如第一分类商品数量为1时，下拉使得第二分类高亮）
-        if (pos.y <= 0) {
-          this.scrollY = Math.abs(Math.round(pos.y));
-        }
-      });
+            this.foodsScroll.on('scroll', (pos) => {
+                // 判断滑动方向，避免下拉时分类高亮错误（如第一分类商品数量为1时，下拉使得第二分类高亮）
+                if (pos.y <= 0) {
+                    this.scrollY = Math.abs(Math.round(pos.y));
+                }
+            });
 
-    },
+        },
         //把每个foodList 的 li 的高度 存进数组
-    _calculateHeight() {
-      let foodList = this.$refs.foodList;
-      let height = 0;
-      this.listHeight.push(height);
-      for (let i = 0; i < foodList.length; i++) {
-          let item = foodList[i];
-          height += item.clientHeight;
-          this.listHeight.push(height);
-      }
+        _calculateHeight() {
+            let foodList = this.$refs.foodList;
+            let height = 0;
+            this.listHeight.push(height);
+            for (let i = 0; i < foodList.length; i++) {
+                let item = foodList[i];
+                height += item.clientHeight;
+                this.listHeight.push(height);
+            }
+        },
+        _followScroll(index) {
+            let menuList = this.$refs.menuList;
+            let el = menuList[index];
+            this.meunScroll.scrollToElement(el, 300, 0, -100);
+        }
     },
-    _followScroll(index) {
-      let menuList = this.$refs.menuList;
-      let el = menuList[index];
-      this.meunScroll.scrollToElement(el, 300, 0, -100);
-    }
+    created() {
+        this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+        this._getSellerInfo();
+        this.goodList = this.data;
+        console.log(this.goodList);
+        this.$nextTick(() => {
+            this._initScroll();
+        });
     },
-  created() {
-    this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
-    this._getSellerInfo();
-    this.goodList = this.data;
-    console.log(this.goodList);
-      this.$nextTick(() => {
-          this._initScroll();
-      });
-  },
-  // bug 点 ,把_calculateHeight函数放进$nextTick中,没有数据了
-  //只好用watch监听,再调用该事件
-  watch:{
-      scrollY:function () {
-          this._calculateHeight()
-      }
-  },
-  components: {
-      shopcart,
-  }
-=======
-  <h1>商品</h1>
-</template>
-
-<script>
-export default {
-name: "goods"
->>>>>>> parent of 0c6976e... 完成侧边选择栏和商品列表栏,实现滚动和左右联动
-=======
-  <h1>商品</h1>
-</template>
-
-<script>
-export default {
-name: "goods"
->>>>>>> parent of 0c6976e... 完成侧边选择栏和商品列表栏,实现滚动和左右联动
+    // bug 点 ,把_calculateHeight函数放进$nextTick中,没有数据了
+    //只好用watch监听,再调用该事件
+    watch: {
+        scrollY: function () {
+            this._calculateHeight()
+        }
+    },
 }
 </script>
 
-<style scoped>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+<style scoped lang="stylus" type="text/stylus">
+
   @import "../../common/stylus/mixin.styl"
 .goodsWrapper
   position: relative
@@ -330,8 +302,5 @@ name: "goods"
             position: absolute
             right: 0
             bottom: 12px
-=======
->>>>>>> parent of 0c6976e... 完成侧边选择栏和商品列表栏,实现滚动和左右联动
-=======
->>>>>>> parent of 0c6976e... 完成侧边选择栏和商品列表栏,实现滚动和左右联动
+
 </style>
