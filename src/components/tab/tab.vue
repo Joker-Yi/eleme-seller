@@ -62,6 +62,7 @@ export default {
     }
   },
   computed:{
+      // 实现上下联动
       selectedLabelDefault: {
         get(){
           return this.tabs[this.index].label

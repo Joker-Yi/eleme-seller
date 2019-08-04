@@ -18,6 +18,7 @@
           </div>
         </div>
       </div>
+<!--      小球容器-->
       <div class="ball-container">
         <div v-for="ball in balls">
           <transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">
@@ -27,6 +28,8 @@
           </transition>
         </div>
       </div>
+
+<!--      购物车列表-->
       <transition name="fold">
         <div class="shopcart-list" v-show="listShow">
           <div class="list-header">
@@ -49,6 +52,7 @@
         </div>
       </transition>
     </div>
+<!--    背景遮罩-->
     <transition name="fade">
       <div class="list-mask" @click="hideList" v-show="listShow"></div>
     </transition>
@@ -59,157 +63,175 @@
 import BScroll from 'better-scroll';
 import cartcontrol from 'components/cartControl/cartControl.vue'
 
+const BALLS_LEN = 10;
+function createBalls() {
+    let res = [];
+    for (let i = 0; i < BALLS_LEN; i++) {
+      res.push({show: false});
+    }
+    return res;
+}
 export default {
   name: "shopCart",
   props:['deliveryPrice','minPrice','selectFoods'],
   data() {
         return {
-            balls: [
-                {
-                    show: false
-                },
-                {
-                    show: false
-                },
-                {
-                    show: false
-                },
-                {
-                    show: false
-                },
-                {
-                    show: false
-                }
-            ],
+            balls: createBalls(),
             dropBalls: [],
             fold: true
         };
     },
   computed: {
-        totalPrice() {
-            let total = 0;
-            this.selectFoods.forEach((food) => {
-                total += food.price * food.count;
-            });
-            return total;
-        },
-        totalCount() {
-            let count = 0;
-            this.selectFoods.forEach((food) => {
-                count += food.count;
-            });
-            return count;
-        },
-        payDesc() {
-            if (this.totalPrice === 0) {
-                return `￥${this.minPrice}元起送`;
-            } else if (this.totalPrice < this.minPrice) {
-                let diff = this.minPrice - this.totalPrice;
-                return `还差￥${diff}元起送`;
-            } else {
-                return '去结算';
-            }
-        },
-        payClass() {
-            if (this.totalPrice < this.minPrice) {
-                return 'not-enough';
-            } else {
-                return 'enough';
-            }
-        },
-        listShow() {
-            if (!this.totalCount) {
-                this.fold = true;
-                return false;
-            }
-            let show = !this.fold;
-            if (show) {
-                this.$nextTick(() => {
-                    if (!this.scroll) {
-                        this.scroll = new BScroll(this.$refs.listContent, {
-                            // 不让它再次触发添加事件了
-                            click: false
-                        });
-                    } else {
-                        this.scroll.refresh();
-                    }
-                });
-            }
-            return show;
-        }
-    },
+      // 商品总价
+      totalPrice() {
+          let total = 0;
+          this.selectFoods.forEach((food) => {
+              total += food.price * food.count;
+          });
+          return total;
+      },
+      // 在购物车图标上显示 总添加的商品数
+      totalCount() {
+          let count = 0;
+          this.selectFoods.forEach((food) => {
+              count += food.count;
+          });
+          return count;
+      },
+      // 根据总价 动态显示对应的文字
+      payDesc() {
+          if (this.totalPrice === 0) {
+              return `￥${this.minPrice}元起送`;
+          } else if (this.totalPrice < this.minPrice) {
+              let diff = this.minPrice - this.totalPrice;
+              return `还差￥${diff}元起送`;
+          } else {
+              return '去结算';
+          }
+      },
+      // 与起送价格比较判断 分别给对应的样式
+      payClass() {
+          if (this.totalPrice < this.minPrice) {
+              return 'not-enough';
+          } else {
+              return 'enough';
+          }
+      },
+      // 购物车里商品列表的显示
+      listShow() {
+          if (!this.totalCount) {
+              this.fold = true;
+              return false;
+          }
+          let show = !this.fold;
+          if (show) {
+              this.$nextTick(() => {
+                  if (!this.scroll) {
+                      this.scroll = new BScroll(this.$refs.listContent, {
+                          // 不让它再次触发添加事件了
+                          click: false
+                      });
+                  } else {
+                      this.scroll.refresh();
+                  }
+              });
+          }
+          return show;
+      }
+  },
   methods: {
-        drop(el) {
-            for (let i = 0; i < this.balls.length; i++) {
-                let ball = this.balls[i];
-                if (!ball.show) {
-                    ball.show = true;
-                    ball.el = el;
-                    this.dropBalls.push(ball);
-                    return;
-                }
-            }
-        },
-        toggleList() {
-            if (!this.totalCount) {
+
+    // 控制购物车商品列表 显示的开关
+    toggleList() {
+        if (!this.totalCount) {
+            return;
+        }
+        this.fold = !this.fold;
+    },
+    hideList() {
+        this.fold = true;
+    },
+    empty() {
+        this.selectFoods.forEach((food) => {
+            food.count = 0;
+        });
+    },
+    pay() {
+        if (this.totalPrice < this.minPrice) {
+            return;
+        }
+        window.alert(`支付${this.totalPrice}元`);
+    },
+    // 购物车列表的 添加按钮 给 小球动画
+    addFood(target) {
+        this.drop(target);
+    },
+
+    // 整个小球动画
+    drop(el) {
+        //遍历 找到第一个ball.show为false的 小球 修改为true,
+        for (let i = 0; i < this.balls.length; i++) {
+            let ball = this.balls[i];
+            if (!ball.show) {
+                ball.show = true;
+                //存入点击的dom对象,以便后面获取它的位置
+                ball.el = el;
+                this.dropBalls.push(ball);
                 return;
-            }
-            this.fold = !this.fold;
-        },
-        hideList() {
-            this.fold = true;
-        },
-        empty() {
-            this.selectFoods.forEach((food) => {
-                food.count = 0;
-            });
-        },
-        pay() {
-            if (this.totalPrice < this.minPrice) {
-                return;
-            }
-            window.alert(`支付${this.totalPrice}元`);
-        },
-        addFood(target) {
-            this.drop(target);
-        },
-        beforeDrop(el) {
-            let count = this.balls.length;
-            while (count--) {
-                let ball = this.balls[count];
-                if (ball.show) {
-                    let rect = ball.el.getBoundingClientRect();
-                    let x = rect.left - 32;
-                    let y = -(window.innerHeight - rect.top - 22);
-                    el.style.display = '';
-                    el.style.webkitTransform = `translate3d(0,${y}px,0)`;
-                    el.style.transform = `translate3d(0,${y}px,0)`;
-                    let inner = el.getElementsByClassName('inner-hook')[0];
-                    inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
-                    inner.style.transform = `translate3d(${x}px,0,0)`;
-                }
-            }
-        },
-        dropping(el, done) {
-            /* eslint-disable no-unused-vars */
-            let rf = el.offsetHeight;
-            this.$nextTick(() => {
-                el.style.webkitTransform = 'translate3d(0,0,0)';
-                el.style.transform = 'translate3d(0,0,0)';
-                let inner = el.getElementsByClassName('inner-hook')[0];
-                inner.style.webkitTransform = 'translate3d(0,0,0)';
-                inner.style.transform = 'translate3d(0,0,0)';
-                el.addEventListener('transitionend', done);
-            });
-        },
-        afterDrop(el) {
-            let ball = this.dropBalls.shift();
-            if (ball) {
-                ball.show = false;
-                el.style.display = 'none';
             }
         }
     },
+    // 动画的钩子函数
+    //在小球运动前, 让 小球 原本就存在于 购物车 里 ,隐藏 ,点击,小球 运动到点击的位置,不过是隐藏看不见的,为小球下落运动做好准备
+    beforeDrop(el) {
+        let count = this.balls.length;
+        while (count--) {
+            // 获取 最后一个运动的小球(即最新的)
+            let ball = this.balls[count];
+            if (ball.show) {
+                // 拿到当前 点击按钮的 位置信息
+                let rect = ball.el.getBoundingClientRect();
+                // 减去32 是 因为购物车 中心 离左侧 的距离 , 获取到 按钮 与 小球的水平距离
+                let x = rect.left - 32;
+                // 窗口的高度 减去 按钮距离顶部的距离 ,为小球 与按钮的 垂直距离
+                let y = -(window.innerHeight - rect.top - 22);// 负值 是因为动画 小球要 往 按钮 去
+                el.style.display = '';//隐藏
+                //小球整体(包括里面的inner) 进行y轴方向 偏移
+                el.style.webkitTransform = `translate3d(0,${y}px,0)`;
+                el.style.transform = `translate3d(0,${y}px,0)`;
+                // 获取小球里层元素
+                let inner = el.getElementsByClassName('inner-hook')[0];
+                // inner 再 进行x轴方向 偏移
+                inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
+                inner.style.transform = `translate3d(${x}px,0,0)`;
+            }
+        }
+    },
+    dropping(el, done) {
+        /* eslint-disable no-unused-vars */
+        //浏览器重绘
+        let rf = el.offsetHeight;
+        this.$nextTick(() => {
+            // 回到原来的位置
+            el.style.webkitTransform = 'translate3d(0,0,0)';
+            el.style.transform = 'translate3d(0,0,0)';
+            let inner = el.getElementsByClassName('inner-hook')[0];
+            inner.style.webkitTransform = 'translate3d(0,0,0)';
+            inner.style.transform = 'translate3d(0,0,0)';
+            //监听transitionend ,告诉本次动画执行完了,执行之后的aferDrop
+            el.addEventListener('transitionend', done);
+        });
+    },
+    afterDrop(el) {
+        // 获取 要下落小球数组中 的 第一个小球
+        let ball = this.dropBalls.shift();
+        // 如果没有要下落的小球了, 则 隐藏
+        if (ball) {
+            ball.show = false;
+            el.style.display = 'none';
+        }
+    }
+  },
   created () {
       // this._getSellerInfo();
   },
@@ -314,6 +336,7 @@ export default {
         left: 32px
         bottom: 22px
         z-index: 200
+        //贝塞尔曲线
         transition: all 0.4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
         .inner
           width: 16px

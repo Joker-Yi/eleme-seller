@@ -15,7 +15,7 @@
       </div>
       <!--      食物列表-->
       <div class="foods-wrapper" ref="foodsWrapper">
-        <ul>
+        <ul class="food">
           <li v-for="item in data" class="food-list" ref="foodList">
             <h1 class="title">{{item.name}}</h1>
             <ul>
@@ -35,7 +35,7 @@
                   </div>
                   <div class="cartcontrol-wrapper">
                     <!--                    添加 小球按钮-->
-                    <cartcontrol :food="food"></cartcontrol>
+                    <cartcontrol @add="onAdd"  :food="food"></cartcontrol>
                   </div>
                 </div>
               </li>
@@ -70,19 +70,20 @@ export default {
         }
     },
     computed: {
-        //当前左侧栏 应该所在的位置
+        // 获取当前处于第几个个分类 滚动食物列表栏 左侧栏会滚动到 相应的位置
         currentIndex() {
             for (let i = 0; i < this.listHeight.length; i++) {
                 // 创建一个区间
                 let height1 = this.listHeight[i];
                 let height2 = this.listHeight[i + 1];
                 if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
-                    this._followScroll(i);
+                    this._followScroll(i);//侧边栏滚动到相应的分类
                     return i;
                 }
             }
             return 0;
         },
+        // 获取所有的食物 存进数组
         selectFoods() {
             let foods = [];
             this.data.forEach((good) => {
@@ -96,6 +97,7 @@ export default {
         }
     },
     methods: {
+        // 发送请求获取 商家相关数据
         _getSellerInfo() {
             getSeller().then((seller) => {
                 this.sellerInfo = seller;
@@ -111,6 +113,7 @@ export default {
             let el = foodList[index];
             this.foodsScroll.scrollToElement(el, 300);
         },
+        // 让当前点击的食物 显示食物详情页
         selectFood(food, event) {
             if (!event._constructed) {
                 return;
@@ -118,10 +121,10 @@ export default {
             this.selectedFood = food;
             this.$refs.food.show();
         },
-        addFood(target) {
+        onAdd(target) {
             this._drop(target);
         },
-        //小球运动
+        //执行 购物车的 小球运动 动画
         _drop(target) {
             // 体验优化,异步执行下落动画
             this.$nextTick(() => {
@@ -160,6 +163,7 @@ export default {
                 this.listHeight.push(height);
             }
         },
+        // 侧边栏 跟随滚动 到对应的分类
         _followScroll(index) {
             let menuList = this.$refs.menuList;
             let el = menuList[index];
@@ -257,57 +261,59 @@ export default {
               white-space: normal !important;
     .foods-wrapper
       flex: 1
-      .title
-        padding-left: 14px
-        height: 26px
-        line-height: 26px
-        border-left: 2px solid #d9dde1
-        font-size: 12px
-        color: rgb(147, 153, 159)
-        background: #f3f5f7
-      .food-item
-        display: flex
-        margin: 18px
-        padding-bottom: 18px
-        border-1px(rgba(7, 17, 27, 0.1))
-        &:last-child
-          border-none()
-          margin-bottom: 0
-        .icon
-          flex: 0 0 57px
-          margin-right: 10px
-        .content
-          flex: 1
-          .name
-            margin: 2px 0 8px 0
-            height: 14px
-            line-height: 14px
-            font-size: 14px
-            color: rgb(7, 17, 27)
-          .desc, .extra
-            line-height: 10px
-            font-size: 10px
-            color: rgb(147, 153, 159)
-          .desc
-            line-height: 12px
-            margin-bottom: 8px
-          .extra
-            .count
-              margin-right: 12px
-          .price
-            font-weight: 700
-            line-height: 24px
-            .now
-              margin-right: 8px
+      .food
+        padding-bottom: 48px
+        .title
+          padding-left: 14px
+          height: 26px
+          line-height: 26px
+          border-left: 2px solid #d9dde1
+          font-size: 12px
+          color: rgb(147, 153, 159)
+          background: #f3f5f7
+        .food-item
+          display: flex
+          margin: 18px
+          padding-bottom: 18px
+          border-1px(rgba(7, 17, 27, 0.1))
+          &:last-child
+            border-none()
+            margin-bottom: 0
+          .icon
+            flex: 0 0 57px
+            margin-right: 10px
+          .content
+            flex: 1
+            .name
+              margin: 2px 0 8px 0
+              height: 14px
+              line-height: 14px
               font-size: 14px
-              color: rgb(240, 20, 20)
-            .old
-              text-decoration: line-through
+              color: rgb(7, 17, 27)
+            .desc, .extra
+              line-height: 10px
               font-size: 10px
               color: rgb(147, 153, 159)
-          .cartcontrol-wrapper
-            position: absolute
-            right: 170px
-            bottom: 12px
+            .desc
+              line-height: 12px
+              margin-bottom: 8px
+            .extra
+              .count
+                margin-right: 12px
+            .price
+              font-weight: 700
+              line-height: 24px
+              .now
+                margin-right: 8px
+                font-size: 14px
+                color: rgb(240, 20, 20)
+              .old
+                text-decoration: line-through
+                font-size: 10px
+                color: rgb(147, 153, 159)
+            .cartcontrol-wrapper
+              position: absolute
+              right: 170px
+              bottom: 12px
 
 </style>
