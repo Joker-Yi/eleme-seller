@@ -21,6 +21,7 @@
 <!--      小球容器-->
       <div class="ball-container">
         <div v-for="ball in balls">
+<!--          半场动画(只有enter的)-->
           <transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">
             <div class="ball" v-show="ball.show">
               <div class="inner inner-hook"></div>
@@ -181,7 +182,7 @@ export default {
             }
         }
     },
-    // 动画的钩子函数
+    // 动画的钩子函数(半场动画)
     //在小球运动前, 让 小球 原本就存在于 购物车 里 ,隐藏 ,点击,小球 运动到点击的位置,不过是隐藏看不见的,为小球下落运动做好准备
     beforeDrop(el) {
         let count = this.balls.length;
